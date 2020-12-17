@@ -10,8 +10,5 @@
         <module name="dougou-client-core" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="untitled" target="1.5" />
-    </bytecodeTargetLevel>
   </component>
 </project>
