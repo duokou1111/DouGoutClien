@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+import java.util.Objects;
 
 public class JsonUsernamePasswordAuthenFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -36,18 +37,19 @@ public class JsonUsernamePasswordAuthenFilter extends UsernamePasswordAuthentica
         while ((inputStr = reader.readLine()) != null) {
             responseStrBuilder.append(inputStr);
         }
-        JSONObject jsonObj = JSON.parseObject(responseStrBuilder.toString());
+      //  JSONObject jsonObj = JSON.parseObject(responseStrBuilder.toString());
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken("test","test");
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException, UnsupportedEncodingException {
-        if(authentication.getDetails() instanceof MyUserDetails){
-            MyUserDetails myUserDetails = (MyUserDetails) authentication.getDetails();
+
+        if(authentication.getPrincipal() instanceof MyUserDetails){
+            MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
             Collection collection = myUserDetails.getAuthorities();
             String token = "";
-            if(!collection.isEmpty()){
+            if(Objects.nonNull(collection) && !collection.isEmpty()){
                 GrantedAuthority authority = (GrantedAuthority) collection.iterator().next();
                 token = JwtService.generateJwt(myUserDetails.getUsername(),authority.getAuthority());
             }else{
@@ -55,6 +57,7 @@ public class JsonUsernamePasswordAuthenFilter extends UsernamePasswordAuthentica
             }
             response.setHeader("Authorization", token);
         }
+
     }
 
     @Override
