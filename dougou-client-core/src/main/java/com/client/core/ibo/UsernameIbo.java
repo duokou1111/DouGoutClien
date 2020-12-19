@@ -1,9 +1,10 @@
 package com.client.core.ibo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class UsernameAndPasswordIbo {
+@AllArgsConstructor
+public class UsernameIbo {
     private String username;
-    private String password;
 }
